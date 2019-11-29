@@ -18,168 +18,167 @@
     return fmt;
   }
 
-  //arrayin函数扩充
-  window.karrayin = function(v){
-    var r = false;
-    for(var i=0;i<this.length;i++){
-      if(this[i] == v){
-        r = true;
-      }
-    }
-    return r;
-  }
 
-  /**
-   * 从数组或对象中按条件检索数据返回
-   * c条件 可传对象 或者字符串 x1=v1&x2=v2
-   */
-  window.karrayquery = function(arr,c,v){
-    var condition = {};
-    var result    = [];
+  var Ktool = {
+    //检测数组中是否有某一值
+    karrayin:function(arr,v){
+      var r = false;
 
-    var getResult = function(list,p){
-      var r = [];
-      for(var i in list){
-        if(list[i][p[0]] == p[1]){
-          if(v == true){
-            r.push(list[i]);
-          }else{
-            r.push(list[i][v]);
-          }
+      for(var i=0;i<arr.length;i++){
+        if(arr[i] == v){
+          r = true;
+          break;
         }
       }
 
       return r;
-    }
+    },
 
-    //条件为字符串 x1=v1&x2=v2
-    if(typeof(c) == typeof("")){
-      var c1 = c.split("&");
+    /**
+     * 从数组或对象中按条件检索数据返回
+     * c条件 可传对象 或者字符串 x1=v1&x2=v2
+    */
+    karrayquery:function(arr,c,v){
+      var condition = {};
+      var result    = [];
 
-      for(var i in c1){
-        var c2 = c1.split("=");
-        condition[c2[0]] = c2[1] ? c2[1] : "";
-      }
-    }else if(typeof(c) == typeof({})){
-      condition = c;
-    }
-
-    //console.log([arr,condition,c,v]);
-
-    var start = false;
-
-    for(var j in condition){
-      var _condition = [j,condition[j]];
-      result = getResult(start ? result : arr,_condition);
-      start = true;
-    }
-
-    return result;
-  }
-  
-
-  /* 
-    二维数组中获取键值的一列
-    k 返回 [arr[k]]
-    k和v 返回{k:v} 不存在的键值对会被过滤掉
-    m = true时 表示一对多 k:[v,v,v]
-  */
-  window.karrayget = function(arr,k,v,m){
-    if(v){
-
-      var result = {};
-      
-      for(var i in arr){
-
-        if(v == true){
-          
-          if(m){
-            if(!result[arr[i][k]]){result[arr[i][k]] = [];}
-
-            result[arr[i][k]].push(arr[i]);
-          }else{
-            result[arr[i][k]] = arr[i];
+      var getResult = function(list,p){
+        var r = [];
+        for(var i in list){
+          if(list[i][p[0]] == p[1]){
+            if(v == true){
+              r.push(list[i]);
+            }else{
+              r.push(list[i][v]);
+            }
           }
-          
-        }else{
-
-          if(m){
-            if(!result[arr[i][k]]){result[arr[i][k]] = [];}
-            result[arr[i][k]].push(arr[i][v]);
-          }else{
-            if(arr[i][k]){result[arr[i][k]] = arr[i][v] ? arr[i][v] : "";}
-          }
-          
         }
+
+        return r;
       }
 
-    }else{
+      //条件为字符串 x1=v1&x2=v2
+      if(typeof(c) == typeof("")){
+        var c1 = c.split("&");
 
-      var result = [];
-
-      for(var i in arr){
-        result.push( arr[i][k] );
+        for(var i in c1){
+          var c2 = c1.split("=");
+          condition[c2[0]] = c2[1] ? c2[1] : "";
+        }
+      }else if(typeof(c) == typeof({})){
+        condition = c;
       }
 
-    }
-    
-    return result;
-  }
+      //console.log([arr,condition,c,v]);
 
-  /**
-   * 删除数组中的某一项
-   */
-  window.karrayremove = function(arr,index){
-    var r = [];
+      var start = false;
 
-    for(var i=0;i<arr.length;i++){
-      if(i!=index){ r.push(arr[i]); }
-    }
+      for(var j in condition){
+        var _condition = [j,condition[j]];
+        result = getResult(start ? result : arr,_condition);
+        start = true;
+      }
 
-    return r;
-  }
+      return result;
+    },
 
-  /**
-   * 解析url 为对象
-   */
-  window.kgetUrlinfo = function(hash){
-    var list = hash.split("#");
+    /* 
+      二维数组中获取键值的一列
+      k 返回 [arr[k]]
+      k和v 返回{k:v} 不存在的键值对会被过滤掉
+      m = true时 表示一对多 k:[v,v,v]
+    */
+    karrayget:function(arr,k,v,m){
+      if(v){
 
-    var r = {}, arr = list[0].split("?");
-
-    if(arr.length>1){
-      arr=arr[1].split("&");
-    }else{
-      arr=[];
-    }
-    
-    for(var i=0;i<arr.length;i++){
-      var s=arr[i].split("=");
-      
-      if(s.length>0 && s[0]!="" && s[1]!=""){
-        if(s.length==1){
-          s[1]="";
-        }
+        var result = {};
         
-        r[s[0]] = decodeURIComponent( s[1] );
+        for(var i in arr){
+
+          if(v == true){
+            
+            if(m){
+              if(!result[arr[i][k]]){result[arr[i][k]] = [];}
+
+              result[arr[i][k]].push(arr[i]);
+            }else{
+              result[arr[i][k]] = arr[i];
+            }
+            
+          }else{
+
+            if(m){
+              if(!result[arr[i][k]]){result[arr[i][k]] = [];}
+              result[arr[i][k]].push(arr[i][v]);
+            }else{
+              if(arr[i][k]){result[arr[i][k]] = arr[i][v] ? arr[i][v] : "";}
+            }
+            
+          }
+        }
+
+      }else{
+
+        var result = [];
+
+        for(var i in arr){
+          result.push( arr[i][k] );
+        }
+
       }
-    }
+      
+      return result;
+    },
 
-    if(list.length > 1){
-      r.URLHASH = kgetUrlinfo(list[1]);
-    }
-    
-    return r;
+    /**
+     * 解析url 为对象
+    */
+    kgetUrlinfo:function(hash){
+      var list = hash.split("#");
+
+      var r = {}, arr = list[0].split("?");
+
+      if(arr.length>1){
+        arr=arr[1].split("&");
+      }else{
+        arr=[];
+      }
+      
+      for(var i=0;i<arr.length;i++){
+        var s=arr[i].split("=");
+        
+        if(s.length>0 && s[0]!="" && s[1]!=""){
+          if(s.length==1){
+            s[1]="";
+          }
+          
+          r[s[0]] = decodeURIComponent( s[1] );
+        }
+      }
+
+      if(list.length > 1){
+        r.URLHASH = kgetUrlinfo(list[1]);
+      }
+      
+      return r;
+    },
+
+    /**
+     * 删除数组中的某一项
+    */
+    karrayremove:function(arr,index){
+      var r = [];
+
+      for(var i=0;i<arr.length;i++){
+        if(i!=index){ r.push(arr[i]); }
+      }
+
+      return r;
+    },
+
+    //base64加解签 仅针对字符串
+    Base64:{_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(e){e=encodeURIComponent(e);var t="";var n,r,i,s,o,u,a;var f=0;e=Base64._utf8_encode(e);while(f<e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n>>2;o=(n&3)<<4|r>>4;u=(r&15)<<2|i>>6;a=i&63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},decode:function(e){var t="";var n,r,i;var s,o,u,a;var f=0;e=e.replace(/[^A-Za-z0-9+/=]/g,"");while(f<e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s<<2|o>>4;r=(o&15)<<4|u>>2;i=(u&3)<<6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=Base64._utf8_decode(t);return decodeURIComponent(t)},_utf8_encode:function(e){e=e.replace(/rn/g,"n");var t="";for(var n=0;n<e.length;n++){var r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r)}else if(r>127&&r<2048){t+=String.fromCharCode(r>>6|192);t+=String.fromCharCode(r&63|128)}else{t+=String.fromCharCode(r>>12|224);t+=String.fromCharCode(r>>6&63|128);t+=String.fromCharCode(r&63|128)}}return t},_utf8_decode:function(e){var t="";var n=0;var r=c1=c2=0;while(n<e.length){r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r);n++}else if(r>191&&r<224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&31)<<6|c2&63);n+=2}else{c2=e.charCodeAt(n+1);c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&15)<<12|(c2&63)<<6|c3&63);n+=3}}return t}}
   }
 
-
-  /**
-   * base64 JS库 atob/btoa + url转义
-   */
-  window.Base64={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(e){e=encodeURIComponent(e);var t="";var n,r,i,s,o,u,a;var f=0;e=Base64._utf8_encode(e);while(f<e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n>>2;o=(n&3)<<4|r>>4;u=(r&15)<<2|i>>6;a=i&63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},decode:function(e){var t="";var n,r,i;var s,o,u,a;var f=0;e=e.replace(/[^A-Za-z0-9+/=]/g,"");while(f<e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s<<2|o>>4;r=(o&15)<<4|u>>2;i=(u&3)<<6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=Base64._utf8_decode(t);return decodeURIComponent(t)},_utf8_encode:function(e){e=e.replace(/rn/g,"n");var t="";for(var n=0;n<e.length;n++){var r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r)}else if(r>127&&r<2048){t+=String.fromCharCode(r>>6|192);t+=String.fromCharCode(r&63|128)}else{t+=String.fromCharCode(r>>12|224);t+=String.fromCharCode(r>>6&63|128);t+=String.fromCharCode(r&63|128)}}return t},_utf8_decode:function(e){var t="";var n=0;var r=c1=c2=0;while(n<e.length){r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r);n++}else if(r>191&&r<224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&31)<<6|c2&63);n+=2}else{c2=e.charCodeAt(n+1);c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&15)<<12|(c2&63)<<6|c3&63);n+=3}}return t}}
-  if(!window.atob || !window.btoa){
-    window.atob = Base64.decode;
-    window.btoa = Base64.encode;
-  }
-
+  window.Ktool = Ktool;
 })();
